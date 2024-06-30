@@ -3,6 +3,16 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 def get_donut_radius(image_path = './mnt/data/image3.png', lower = 127, upper = 255):
+    # 函數的輸入：
+    # image_path: 圖像的路徑 (默認值為 './mnt/data/image3.png')
+    # lower: 二值化圖像的閾值下限 (默認值為 127)
+    # upper: 二值化圖像的閾值上限 (默認值為 255)
+    
+    # 函數的輸出：
+    # center_outer: 外圓的圓心 (座標形式，如 (x, y))
+    # radius_outer: 外圓的半徑 (像素單位)
+    # radius_inner: 內圓的半徑 (像素單位)
+        
     # 讀取圖像
     image = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
 
