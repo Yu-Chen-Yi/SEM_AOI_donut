@@ -117,6 +117,8 @@ def get_donut_radius(image_path, lower=140, upper=255, pix2length=0.1):
     """
     獲取甜甜圈的內外圓半徑並標註在圖像上。
     """
+    image_RGB = cv2.imread(image_path)
+
     image = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
     _, binary_image = cv2.threshold(image, lower, upper, cv2.THRESH_BINARY)
     contours, _ = cv2.findContours(binary_image, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
@@ -128,15 +130,15 @@ def get_donut_radius(image_path, lower=140, upper=255, pix2length=0.1):
     row_values = binary_image[center_outer[1], :].astype(float)
     changes = np.diff(row_values)
     nonzero_indices = np.nonzero(changes)
-    radius_inner = (nonzero_indices[0][2] - nonzero_indices[0][1]) / 2
+    radius_inner = (nonzero_indices[0][2] - nonzero_indices[0][1]) / 2 +1
     
-    cv2.circle(image, center_outer, radius_outer, (0, 255, 0), 2)
-    cv2.circle(image, center_outer, 2, (255, 0, 0), 3)
+    cv2.circle(image_RGB, center_outer, radius_outer, (0, 255, 0), 1)
+    cv2.circle(image_RGB, center_outer, 2, (255, 0, 0), 2)
     if radius_inner > 0:
-        cv2.circle(image, center_outer, int(radius_inner), (0, 0, 255), 2)
+        cv2.circle(image_RGB, center_outer, int(radius_inner), (0, 0, 255), 1)
     
     text_outer = f'D1={2*radius_outer * pix2length:.2f}'
-    text_inner = f'D2={radius_inner * pix2length:.2f}'
+    text_inner = f'D2={2*radius_inner * pix2length:.2f}'
     directory, filename = os.path.split(image_path)
     new_directory = directory + '_labeled'
     if not os.path.exists(new_directory):
@@ -144,7 +146,7 @@ def get_donut_radius(image_path, lower=140, upper=255, pix2length=0.1):
     
     new_filename = text_outer + ', ' + text_inner + ', ' + filename
     new_image_path = os.path.join(new_directory, new_filename)
-    cv2.imwrite(new_image_path, image)
+    cv2.imwrite(new_image_path, image_RGB)
     
     outer_diameter = int(2 * radius_outer)
     inner_diameter = int(2 * radius_inner)
